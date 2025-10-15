@@ -13,21 +13,17 @@
         }
         .container {
             max-width: 800px;
-            background-color: #fff;
+            background-color: #ffffff;
             padding: 2rem;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         h1 {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
-        #total-sales-container {
-            font-size: 1.25rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background-color: #e9ecef;
-            border-radius: 5px;
+        #total-sales {
+            font-weight: bold;
+            color: #198754; /* Bootstrap success color */
         }
     </style>
 </head>
@@ -35,10 +31,7 @@
 
     <div class="container">
         <h1>Product Sales Summary</h1>
-
-        <div id="total-sales-container">
-            Total Sales: $<span id="total-sales">0.00</span>
-        </div>
+        <p class="lead">Overall Total Sales: <span id="total-sales">$0.00</span></p>
 
         <table class="table table-striped table-hover" id="product-sales">
             <thead class="table-dark">
@@ -48,77 +41,66 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Data will be inserted here by JavaScript -->
+                <!-- Product sales data will be populated here by JavaScript -->
             </tbody>
         </table>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // CSV data provided in the brief
             const csvData = `product,region,sales
 Widget A,North,150.50
 Widget B,South,220.00
 Widget A,North,75.25`;
 
-            // Function to parse CSV and calculate sales
-            function processSalesData(data) {
-                const lines = data.trim().split('\n');
-                // Remove the header row
-                const records = lines.slice(1);
+            const productSales = {};
+            let grandTotalSales = 0;
 
-                const salesByProduct = {};
-                let grandTotal = 0;
+            // Parse the CSV data
+            const rows = csvData.trim().split('\n');
+            const dataRows = rows.slice(1); // Remove header row
 
-                records.forEach(record => {
-                    const [product, region, salesStr] = record.split(',');
-                    const sales = parseFloat(salesStr);
+            dataRows.forEach(row => {
+                const columns = row.split(',');
+                if (columns.length === 3) {
+                    const product = columns[0].trim();
+                    const sales = parseFloat(columns[2]);
 
-                    if (!isNaN(sales)) {
-                        if (salesByProduct[product]) {
-                            salesByProduct[product] += sales;
-                        } else {
-                            salesByProduct[product] = sales;
-                        }
-                        grandTotal += sales;
+                    if (product && !isNaN(sales)) {
+                        // Aggregate sales by product
+                        productSales[product] = (productSales[product] || 0) + sales;
+                        // Accumulate grand total
+                        grandTotalSales += sales;
                     }
-                });
-
-                return { salesByProduct, grandTotal };
-            }
-
-            // Function to render the data into the HTML
-            function renderData() {
-                const { salesByProduct, grandTotal } = processSalesData(csvData);
-                
-                const tableBody = document.querySelector('#product-sales tbody');
-                const totalSalesElement = document.getElementById('total-sales');
-
-                // Clear any existing content
-                tableBody.innerHTML = '';
-
-                // Populate the table
-                for (const product in salesByProduct) {
-                    const total = salesByProduct[product];
-                    const row = document.createElement('tr');
-                    
-                    const productCell = document.createElement('td');
-                    productCell.textContent = product;
-                    row.appendChild(productCell);
-
-                    const salesCell = document.createElement('td');
-                    salesCell.textContent = `$${total.toFixed(2)}`;
-                    row.appendChild(salesCell);
-
-                    tableBody.appendChild(row);
                 }
+            });
 
-                // Update the total sales element
-                totalSalesElement.textContent = grandTotal.toFixed(2);
+            // Get table body to populate
+            const tableBody = document.querySelector('#product-sales tbody');
+            tableBody.innerHTML = ''; // Clear any existing content
+
+            // Create and append table rows for each product
+            for (const product in productSales) {
+                const sales = productSales[product];
+                const tr = document.createElement('tr');
+                
+                const tdProduct = document.createElement('td');
+                tdProduct.textContent = product;
+
+                const tdSales = document.createElement('td');
+                tdSales.textContent = `$${sales.toFixed(2)}`;
+
+                tr.appendChild(tdProduct);
+                tr.appendChild(tdSales);
+                tableBody.appendChild(tr);
             }
 
-            // Initial render
-            renderData();
+            // Update the total sales element
+            const totalSalesElement = document.getElementById('total-sales');
+            if (totalSalesElement) {
+                totalSalesElement.textContent = `$${grandTotalSales.toFixed(2)}`;
+            }
         });
     </script>
 
