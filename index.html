@@ -1,108 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Sales Report</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <style>
-        body {
-            padding: 2rem;
-            background-color: #f8f9fa;
-        }
-        .container {
-            max-width: 800px;
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        h1 {
-            margin-bottom: 1rem;
-        }
-        #total-sales {
-            font-weight: bold;
-            color: #198754; /* Bootstrap success color */
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <h1>Product Sales Summary</h1>
-        <p class="lead">Overall Total Sales: <span id="total-sales">$0.00</span></p>
-
-        <table class="table table-striped table-hover" id="product-sales">
-            <thead class="table-dark">
-                <tr>
-                    <th>Product</th>
-                    <th>Total Sales</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Product sales data will be populated here by JavaScript -->
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // CSV data provided in the brief
-            const csvData = `product,region,sales
-Widget A,North,150.50
-Widget B,South,220.00
-Widget A,North,75.25`;
-
-            const productSales = {};
-            let grandTotalSales = 0;
-
-            // Parse the CSV data
-            const rows = csvData.trim().split('\n');
-            const dataRows = rows.slice(1); // Remove header row
-
-            dataRows.forEach(row => {
-                const columns = row.split(',');
-                if (columns.length === 3) {
-                    const product = columns[0].trim();
-                    const sales = parseFloat(columns[2]);
-
-                    if (product && !isNaN(sales)) {
-                        // Aggregate sales by product
-                        productSales[product] = (productSales[product] || 0) + sales;
-                        // Accumulate grand total
-                        grandTotalSales += sales;
-                    }
-                }
-            });
-
-            // Get table body to populate
-            const tableBody = document.querySelector('#product-sales tbody');
-            tableBody.innerHTML = ''; // Clear any existing content
-
-            // Create and append table rows for each product
-            for (const product in productSales) {
-                const sales = productSales[product];
-                const tr = document.createElement('tr');
-                
-                const tdProduct = document.createElement('td');
-                tdProduct.textContent = product;
-
-                const tdSales = document.createElement('td');
-                tdSales.textContent = `$${sales.toFixed(2)}`;
-
-                tr.appendChild(tdProduct);
-                tr.appendChild(tdSales);
-                tableBody.appendChild(tr);
-            }
-
-            // Update the total sales element
-            const totalSalesElement = document.getElementById('total-sales');
-            if (totalSalesElement) {
-                totalSalesElement.textContent = `$${grandTotalSales.toFixed(2)}`;
-            }
-        });
-    </script>
-
-</body>
-</html>
+<h1>Error</h1><p>Could not generate the application code. Gemini API error: 429 You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits.
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 2
+Please retry in 10.12893609s. [violations {
+  quota_metric: "generativelanguage.googleapis.com/generate_content_free_tier_requests"
+  quota_id: "GenerateRequestsPerMinutePerProjectPerModel-FreeTier"
+  quota_dimensions {
+    key: "model"
+    value: "gemini-2.5-pro"
+  }
+  quota_dimensions {
+    key: "location"
+    value: "global"
+  }
+  quota_value: 2
+}
+, links {
+  description: "Learn more about Gemini API quotas"
+  url: "https://ai.google.dev/gemini-api/docs/rate-limits"
+}
+, retry_delay {
+  seconds: 10
+}
+]</p>
